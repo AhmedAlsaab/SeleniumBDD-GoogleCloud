@@ -35,7 +35,7 @@ public class DemoSteps {
     }
 
     @And("I query the Waste and Diversion Dataset from {string}")
-    public void checkBQResponse(String getData) throws Exception{
+    public void queryData(String getData) throws Exception{
         switch (getData){
             case "bigquery":
                 System.out.println("Loading Data from Big Query");

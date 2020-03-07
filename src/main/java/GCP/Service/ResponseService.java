@@ -1,6 +1,6 @@
 package GCP.Service;
 
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 
 
 public interface ResponseService {

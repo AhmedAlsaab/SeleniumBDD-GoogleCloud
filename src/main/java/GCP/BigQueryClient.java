@@ -8,7 +8,7 @@ import com.google.cloud.bigquery.JobId;
 import com.google.cloud.bigquery.JobInfo;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.TableResult;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -67,7 +67,7 @@ public class BigQueryClient implements ResponseService {
         TableResult bqResponse = runQuery(myQuery);
         bqResponse.getValues().forEach(value -> {
             value.iterator().forEachRemaining(json -> {
-                response.add(new JSONObject(json.getStringValue()));
+                response.put(new JSONObject(json.getStringValue()));
             });
         });
         return response;
