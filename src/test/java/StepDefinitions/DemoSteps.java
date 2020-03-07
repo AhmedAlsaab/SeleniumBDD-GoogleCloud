@@ -1,7 +1,7 @@
 package StepDefinitions;
 
 import GCP.BigQueryClient;
-import GCP.CompareJSON;
+import GCP.DataRequestClient;
 import GCP.Service.ResponseService;
 import JSONStore.LoadJSONFromFile;
 import io.cucumber.java.en.And;
@@ -10,11 +10,12 @@ import io.cucumber.java.en.Then;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-public class Login {
+public class DemoSteps {
 
 
     ResponseService bigQueryData = new BigQueryClient();
     ResponseService localData = new LoadJSONFromFile();
+    DataRequestClient dataRequestClient = new DataRequestClient();
 
 
     WebDriver webDriver;
@@ -27,12 +28,28 @@ public class Login {
         webDriver = new ChromeDriver();
     }
 
-    @Given("I connect to BigQuery and check for a response")
-    public void checkBQResponse() throws Exception{
-        CompareJSON compareJSON = new CompareJSON();
-        compareJSON.setResponseService(bigQueryData);
-        compareJSON.checkResult();
+    @Given("I set the GCP credentials")
+    public void setGCPCredentials(){
+        // TODO: 07/03/2020 Set GCP Auth in a seperate method instead of setting it before querying a BQ dataset
+        System.out.println("GCP Credentials Set");
     }
+
+    @And("I query the Waste and Diversion Dataset from {string}")
+    public void checkBQResponse(String getData) throws Exception{
+        switch (getData){
+            case "bigquery":
+                System.out.println("Loading Data from Big Query");
+                dataRequestClient.setResponseService(bigQueryData);
+                break;
+            case "local":
+                System.out.println("Loading Data from a local file");
+                dataRequestClient.setResponseService(localData);
+                break;
+        }
+        dataRequestClient.checkResult();
+    }
+
+
 
     @And("I navigate to the Google Cloud Platform Home Page")
     public void iNavigateToGCPHomePage(){
