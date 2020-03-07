@@ -1,43 +1,38 @@
 package GCP;
 
-import JSONStore.JSONDataManager;
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.BigQueryOptions;
-import com.google.cloud.bigquery.FieldValueList;
 import com.google.cloud.bigquery.Job;
 import com.google.cloud.bigquery.JobId;
 import com.google.cloud.bigquery.JobInfo;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.TableResult;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+
 
 import java.util.UUID;
 
 public class BigQueryClient {
-    public TableResult bqJSON() throws Exception {
-        BigQuery bigquery = BigQueryOptions.getDefaultInstance().getService();
-        QueryJobConfiguration queryConfig =
+    public BigQuery getDefaultInstance(){
+        return BigQueryOptions.getDefaultInstance().getService();
+    }
+
+    public TableResult runQuery(String myQuery) throws Exception{
+        TableResult result;
+        QueryJobConfiguration queryJobConfiguration =
                 QueryJobConfiguration.newBuilder(
-                        "SELECT load_id, load_type, report_date FROM `bigquery-public-data.austin_waste.waste_and_diversion` LIMIT 10;")
+                        myQuery)
                         .setUseLegacySql(false)
                         .build();
         JobId jobId = JobId.of(UUID.randomUUID().toString());
-        Job queryJob = bigquery.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
+        Job queryJob = getDefaultInstance().create(JobInfo.newBuilder(queryJobConfiguration).setJobId(jobId).build());
         queryJob = queryJob.waitFor();
         if (queryJob == null) {
             throw new RuntimeException("Job no longer exists");
         } else if (queryJob.getStatus().getError() != null) {
             throw new RuntimeException(queryJob.getStatus().getError().toString());
         }
-        TableResult result = queryJob.getQueryResults();
+        result = queryJob.getQueryResults();
         return result;
-
-    }
-    public void sendToJSONWriter(JsonObject jsonResponse){
-        new JSONDataManager().saveJSON(jsonResponse);
     }
 
 

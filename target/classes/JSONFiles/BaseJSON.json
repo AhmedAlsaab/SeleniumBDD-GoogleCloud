@@ -1,16 +1,52 @@
-{
-  "load_id": "364997",
-  "load_type": "RECYCLING - SINGLE STREAM",
-  "SubPolicy": [
-    "2009-08-07",
-    "2008-04-11",
-    "2009-01-16",
-    "2009-07-10",
-    "2006-02-03",
-    "2008-04-04",
-    "2006-06-02",
-    "2009-02-27",
-    "2010-02-12",
-    "2010-04-16"
-  ]
-}
+[
+  {
+    "load_id": "336590",
+    "load_type": "RECYCLING - SINGLE STREAM",
+    "report_date": "2009-08-07"
+  },
+  {
+    "load_id": "274232",
+    "load_type": "RECYCLING - PAPER",
+    "report_date": "2008-04-11"
+  },
+  {
+    "load_id": "312167",
+    "load_type": "RECYCLING - SINGLE STREAM",
+    "report_date": "2009-01-16"
+  },
+  {
+    "load_id": "333746",
+    "load_type": "RECYCLING - SINGLE STREAM",
+    "report_date": "2009-07-10"
+  },
+  {
+    "load_id": "164543",
+    "load_type": "RECYCLING - COMINGLE",
+    "report_date": "2006-02-03"
+  },
+  {
+    "load_id": "273360",
+    "load_type": "RECYCLING - COMINGLE",
+    "report_date": "2008-04-04"
+  },
+  {
+    "load_id": "181228",
+    "load_type": "RECYCLING - PAPER",
+    "report_date": "2006-06-02"
+  },
+  {
+    "load_id": "317354",
+    "load_type": "RECYCLING - SINGLE STREAM",
+    "report_date": "2009-02-27"
+  },
+  {
+    "load_id": "357563",
+    "load_type": "RECYCLING - SINGLE STREAM",
+    "report_date": "2010-02-12"
+  },
+  {
+    "load_id": "364997",
+    "load_type": "RECYCLING - SINGLE STREAM",
+    "report_date": "2010-04-16"
+  }
+]
