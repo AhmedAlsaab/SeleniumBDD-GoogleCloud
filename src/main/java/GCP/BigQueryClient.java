@@ -8,7 +8,7 @@ import com.google.cloud.bigquery.JobId;
 import com.google.cloud.bigquery.JobInfo;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.TableResult;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.JSONObject;
 
 
@@ -16,14 +16,29 @@ import java.util.UUID;
 
 public class BigQueryClient implements ResponseService {
 
+    /**
+     *
+     * @return gets the requested BQ instance using the credentials set in the IDE Env
+     */
     public BigQuery getDefaultInstance(){
         return BigQueryOptions.getDefaultInstance().getService();
     }
 
+    /**
+     *
+     * @param myQuery
+     * @return Constructs the query to be sent to BQ with the required config
+     */
     private QueryJobConfiguration queryConfig(String myQuery){
         return QueryJobConfiguration.newBuilder(myQuery).setUseLegacySql(false).build();
     }
 
+    /**
+     *
+     * @param myQuery
+     * @return returns the response from BQ into a TableResult format
+     * @throws Exception
+     */
     public TableResult runQuery(String myQuery) throws Exception{
         TableResult result;
         JobId jobId = JobId.of(UUID.randomUUID().toString());
@@ -35,67 +50,28 @@ public class BigQueryClient implements ResponseService {
             throw new RuntimeException(queryJob.getStatus().getError().toString());
         }
         result = queryJob.getQueryResults();
-        System.out.println(result);
         return result;
     }
 
+    /**
+     *
+     * @param myQuery
+     * @return JSONArray with the BigQuery response and sent to the interface
+     * @throws Exception
+     */
+
+
     @Override
-    public JSONArray interpretResponse(String myQuery) throws Exception{
+    public JSONArray myJSONData(String myQuery) throws Exception{
         JSONArray response = new JSONArray();
         TableResult bqResponse = runQuery(myQuery);
         bqResponse.getValues().forEach(value -> {
             value.iterator().forEachRemaining(json -> {
-                response.put(new JSONObject(json.getStringValue()));
+                response.add(new JSONObject(json.getStringValue()));
             });
         });
-        System.out.println(response);
         return response;
     }
-
-
-
-
-//    public JsonObject bqJSON() throws Exception {
-//        BigQuery bigquery = BigQueryOptions.getDefaultInstance().getService();
-//
-//        QueryJobConfiguration queryConfig =
-//                QueryJobConfiguration.newBuilder(
-//                        "SELECT load_id, load_type, report_date FROM `bigquery-public-data.austin_waste.waste_and_diversion` LIMIT 10;")
-//                        .setUseLegacySql(false)
-//                        .build();
-//
-//        JobId jobId = JobId.of(UUID.randomUUID().toString());
-//        Job queryJob = bigquery.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build());
-//
-//
-//        queryJob = queryJob.waitFor();
-//
-//
-//        if (queryJob == null) {
-//            throw new RuntimeException("Job no longer exists");
-//        } else if (queryJob.getStatus().getError() != null) {
-//            throw new RuntimeException(queryJob.getStatus().getError().toString());
-//        }
-//
-//        TableResult result = queryJob.getQueryResults();
-//        System.out.println(result);
-//        JsonObject jsonObject = new JsonObject();
-//        JsonArray jsonArray = new JsonArray();
-//        for (FieldValueList row : result.iterateAll()) {
-//            String loadType = row.get("load_type").getStringValue();
-//            String loadId = row.get("load_id").getStringValue();
-//            String reportDate = row.get("report_date").getStringValue();
-//            jsonObject.addProperty("load_id", loadId);
-//            jsonObject.addProperty("load_type", loadType);
-//            jsonArray.add(reportDate);
-//            jsonObject.add("SubPolicy", jsonArray);
-//
-//        }
-//        System.out.print(jsonObject);
-//        return jsonObject;
-//
-//    }
-
 }
 
 

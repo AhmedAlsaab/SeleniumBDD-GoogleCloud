@@ -1,36 +1,47 @@
 package JSONStore;
 
-import org.json.simple.JSONObject;
+import GCP.Service.ResponseService;
+import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
-import java.io.FileReader;
+import org.json.simple.parser.ParseException;
 
+import java.io.*;
 
-public class LoadJSONFromFile {
+public class LoadJSONFromFile implements ResponseService {
 
- public JSONObject loadJSON(){
-     JSONParser parser = new JSONParser();
-     JSONObject jsonObject = null;
-     try {
-         Object obj = parser.parse(new FileReader("C:\\GCPAutomation\\GCPTestAutomation\\SeleniumBDD-GoogleCloud\\src\\main\\resources\\JSONFiles\\BaseJSON.json"));
-          jsonObject = (JSONObject) obj;
-     } catch (Exception e) {
-         e.printStackTrace();
-     }
-     return jsonObject;
+private static final String wasteAndDiversionJSONFilePath = "C:\\GCPAutomation\\GCPTestAutomation\\SeleniumBDD-GoogleCloud\\src\\main\\resources\\JSONFiles\\BaseJSON.json";
+
+    /**
+     *
+     * @param filePath
+     * @return Loads JSON file locally based on param and assigns to JSONArray
+     */
+ public static JSONArray loadWasteInfo(String filePath){
+    JSONArray baseJSON = null;
+    JSONParser jsonParser = new JSONParser();
+    try(FileReader reader = new FileReader(filePath)){
+        Object obj = jsonParser.parse(reader);
+        baseJSON = (JSONArray)obj;
+    }catch (IOException | ParseException e){
+        e.printStackTrace();
+    }
+    return baseJSON;
  }
 
+    /**
+     *
+     * @param myQuery
+     * @return Returns a JSONArray from a local file based on Dataset looked for by user.
+     * @throws Exception
+     */
 
-    // A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
-    // A JSON array. JSONObject supports java.util.List interface.
-    //JSONArray companyList = (JSONArray) jsonObject.get("Company List");
-
-    // An iterator over a collection. Iterator takes the place of Enumeration in the Java Collections Framework.
-    // Iterators differ from enumerations in two ways:
-    // 1. Iterators allow the caller to remove elements from the underlying collection during the iteration with well-defined semantics.
-    // 2. Method names have been improved.
-//         Iterator<JSONObject> iterator = companyList.iterator();
-//         while (iterator.hasNext()) {
-//             System.out.println(iterator.next());
-//         }
-
+    @Override
+    public JSONArray myJSONData(String myQuery) throws Exception {
+     if(myQuery.contains("bigquery-public-data.austin_waste.waste_and_diversion")){
+         return loadWasteInfo(wasteAndDiversionJSONFilePath);
+     } else {
+         System.out.println("No such dataset");
+         return null;
+     }
+    }
 }

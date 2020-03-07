@@ -1,7 +1,7 @@
 package GCP.Service;
 
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 
 public interface ResponseService {
-    JSONArray interpretResponse(String myQuery) throws Exception;
+    JSONArray myJSONData(String myQuery) throws Exception;
 }

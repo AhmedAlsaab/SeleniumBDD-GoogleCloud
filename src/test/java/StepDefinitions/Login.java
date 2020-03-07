@@ -3,6 +3,7 @@ package StepDefinitions;
 import GCP.BigQueryClient;
 import GCP.CompareJSON;
 import GCP.Service.ResponseService;
+import JSONStore.LoadJSONFromFile;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -11,8 +12,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class Login {
 
-    private ResponseService responseService;
-    ResponseService bigQueryService = new BigQueryClient();
+
+    ResponseService bigQueryData = new BigQueryClient();
+    ResponseService localData = new LoadJSONFromFile();
 
 
     WebDriver webDriver;
@@ -28,7 +30,7 @@ public class Login {
     @Given("I connect to BigQuery and check for a response")
     public void checkBQResponse() throws Exception{
         CompareJSON compareJSON = new CompareJSON();
-        compareJSON.setResponseService(bigQueryService);
+        compareJSON.setResponseService(bigQueryData);
         compareJSON.checkResult();
     }
 
