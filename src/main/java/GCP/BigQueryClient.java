@@ -1,5 +1,6 @@
 package GCP;
 
+import GCP.Service.ResponseService;
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.BigQueryOptions;
 import com.google.cloud.bigquery.Job;
@@ -7,24 +8,26 @@ import com.google.cloud.bigquery.JobId;
 import com.google.cloud.bigquery.JobInfo;
 import com.google.cloud.bigquery.QueryJobConfiguration;
 import com.google.cloud.bigquery.TableResult;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 import java.util.UUID;
 
-public class BigQueryClient {
+public class BigQueryClient implements ResponseService {
+
     public BigQuery getDefaultInstance(){
         return BigQueryOptions.getDefaultInstance().getService();
     }
 
+    private QueryJobConfiguration queryConfig(String myQuery){
+        return QueryJobConfiguration.newBuilder(myQuery).setUseLegacySql(false).build();
+    }
+
     public TableResult runQuery(String myQuery) throws Exception{
         TableResult result;
-        QueryJobConfiguration queryJobConfiguration =
-                QueryJobConfiguration.newBuilder(
-                        myQuery)
-                        .setUseLegacySql(false)
-                        .build();
         JobId jobId = JobId.of(UUID.randomUUID().toString());
-        Job queryJob = getDefaultInstance().create(JobInfo.newBuilder(queryJobConfiguration).setJobId(jobId).build());
+        Job queryJob = getDefaultInstance().create(JobInfo.newBuilder(queryConfig(myQuery)).setJobId(jobId).build());
         queryJob = queryJob.waitFor();
         if (queryJob == null) {
             throw new RuntimeException("Job no longer exists");
@@ -32,8 +35,23 @@ public class BigQueryClient {
             throw new RuntimeException(queryJob.getStatus().getError().toString());
         }
         result = queryJob.getQueryResults();
+        System.out.println(result);
         return result;
     }
+
+    @Override
+    public JSONArray interpretResponse(String myQuery) throws Exception{
+        JSONArray response = new JSONArray();
+        TableResult bqResponse = runQuery(myQuery);
+        bqResponse.getValues().forEach(value -> {
+            value.iterator().forEachRemaining(json -> {
+                response.put(new JSONObject(json.getStringValue()));
+            });
+        });
+        System.out.println(response);
+        return response;
+    }
+
 
 
 
